@@ -6,16 +6,16 @@
     "configurations": [
         {
             "type": "java",
-            "name": "TESLA_Encyrption",
+            "name": "Current File",
             "request": "launch",
-            "mainClass": "Code.TESLA_Encyrption",
-            "projectName": "TESLA Encryption Program"
+            "mainClass": "${file}"
         },
         {
             "type": "java",
-            "name": "EncryptionGenerator",
-            "request": "attach",
-            "projectName": "TESLA Encryption Program"
+            "name": "TESLA_Encyrption",
+            "request": "launch",
+            "mainClass": "TESLA_Encyrption",
+            "projectName": "TESLA Encryption Program_8a0b1658"
         }
     ]
 }

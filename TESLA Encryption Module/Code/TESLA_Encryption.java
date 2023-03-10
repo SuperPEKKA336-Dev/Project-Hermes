@@ -1,8 +1,8 @@
 /* @File: TESLA_Encryption.java */
 /* @Author: SuperPEKKA336 */
 /* @Version: 0.1.1 Alpha */
-/* @PatchNotes: Working on the encryption method */
-/* @Updated: 03/08/2023 */
+/* @PatchNotes: Encryption method is finished; working on decryption next */
+/* @Updated: 03/10/2023 */
 
 // Imports
 import java.io.*;
@@ -73,7 +73,6 @@ class TESLA_Encyrption
     Scanner menuChoiceScanner = new Scanner(System.in);
     System.out.print("Your Choice: ");
     String menuChoice_String = menuChoiceScanner.nextLine();
-    menuChoiceScanner.close();
     System.out.println();
     
     while(!menuChoice_String.equals("1") && !menuChoice_String.equals("2") && !menuChoice_String.equals("3") && !menuChoice_String.equals("`"))
@@ -182,7 +181,6 @@ class TESLA_Encyrption
           Scanner choiceScanner = new Scanner(System.in);
           System.out.print("[System] Retry [y/n]: ");
           choiceString = choiceScanner.nextLine();
-          choiceScanner.close();
           System.out.println();
           
           if(choiceString.equals("n") || choiceString.equals("`"))
@@ -212,6 +210,8 @@ class TESLA_Encyrption
 
     while(retry && !exit)
     {
+      System.out.println("[System] Loading file . . . .");
+
       // Prompts user to slect file
       JFileChooser textFileChooser = new JFileChooser(new File(System.getProperty("user.home") + "/Documents"));
       FileNameExtensionFilter textFileType = new FileNameExtensionFilter("Text Files", "txt");
@@ -223,8 +223,6 @@ class TESLA_Encyrption
 
       if(textFileChooser.showDialog(null, "Upload") == JFileChooser.APPROVE_OPTION)
       {
-        System.out.println("hi");
-
         textFile = textFileChooser.getSelectedFile();
         
         System.out.println("[System] File successfully loaded.");
@@ -236,16 +234,14 @@ class TESLA_Encyrption
         String encryptChoiceString = encryptChoiceScanner.nextLine();
                 
         try
-        {          
-          if(!encryptChoiceString.equals("n") || !encryptChoiceString.equals("`") || !encryptChoiceString.equals("`"))
+        {
+          if(!encryptChoiceString.equals("y") || !encryptChoiceString.equals("n") || !encryptChoiceString.equals("`"))
           {
             while(!exit)
             {
               System.out.println("[System] Error: Invalid Choice.");
               encryptChoiceScanner = new Scanner(System.in);
               System.out.print("[System] Encrypt [y/n]: ");
-              encryptChoiceString = encryptChoiceScanner.nextLine();
-              encryptChoiceScanner.close();
               System.out.println();
               
               if(encryptChoiceString.equals("n") || encryptChoiceString.equals("`"))
@@ -267,9 +263,8 @@ class TESLA_Encyrption
           
           if(encryptChoiceString.equals("y"))
           {
-            File encryptedFile = new File(System.getProperty("user.home") + "/Documents" + "/encrypted." + textFile);
+            File encryptedFile = new File(System.getProperty("user.home") + "/Documents" + "/encrypted." + textFile.getName());
             FileWriter encryptedFileWriter = new FileWriter(encryptedFile);
-            new File("");
             BufferedReader fileReader = new BufferedReader(new FileReader(textFile));
 
             try
@@ -278,12 +273,19 @@ class TESLA_Encyrption
               
               while(character != -1)
               {
-                int randNum = ((int)Math.floor(Math.random() * (15 - 0 + 1) + 15));
+                int randNum = (int)Math.floor(Math.random() * (15 - 0 + 1) + 0);
                 
                 encryptedFileWriter.write(encryptionKey[character][randNum]);
                 
                 character = fileReader.read();
               }
+
+              retry = false;
+
+              System.out.println("[System] File successfully encrypted.");
+              System.out.println("[System] File: " + encryptedFile);
+              System.out.println();
+              System.out.println(DIVIDER);
             }
             catch(Exception e)
             {
@@ -304,7 +306,6 @@ class TESLA_Encyrption
           Scanner choiceScanner = new Scanner(System.in);
           System.out.print("[System] Retry [y/n]: ");
           String choiceString = choiceScanner.nextLine();
-          choiceScanner.close();
           System.out.println();
           
           if(!choiceString.equals("n") || !choiceString.equals("`") || !choiceString.equals("`"))
