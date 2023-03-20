@@ -1,35 +1,56 @@
 /* @File: TESLA_Encryption.java */
 /* @Author: SuperPEKKA336 */
 /* @Version: 0.1.1 Alpha */
-/* @PatchNotes: Encryption method is finished; working on decryption next */
-/* @Updated: 03/10/2023 */
+/* @PatchNotes: Working on shifting the UI to a window; working on decryption method */
+/* @Updated: 03/13/2023 */
 
 // Imports
+import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Toolkit;
+import java.awt.Frame;
+import java.awt.Window;
+
 import java.io.*;
-import java.util.*;
-import java.io.LineNumberReader;
-import javax.swing.JFileChooser;
-import java.io.File;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.FileWriter;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.LineNumberReader;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+
+import java.util.*;
 
 class TESLA_Encyrption
 {
   // Constant Global Variables
-  static final String VERSION_NUMBER = new String("Version 0.1.1");
+  public static final String PROGRAM_NAME = new String("T.E.S.L.A. Encryption Program");
+  public static final String VERSION_NUMBER = new String("Version 0.1.1a");
   static final String DEFAULT_FILE_NAME = new String("TESLA_CipherKey.txt");
   static final String DIVIDER = new String("==================================================");
-  
+
   // Global Variables
+  public static JFrame mainFrame = new JFrame(PROGRAM_NAME + " - " + VERSION_NUMBER);
+  public static Canvas mainCanvas = new Drawing();
+  public static int screenLength;
+  public static int screenWidth;
   static File encryptionKey_File = new File("");
   static String[][] encryptionKey = new String[256][16];
   static LineNumberReader encryptionKey_FileReader;
   static boolean exit;
   static boolean keyLoaded;
+  private static Graphics Graphics;
   
   public static void main(String args[]) // Main method
   {
+    frameSetup();
+
     int menuChoice = menu();
     
     while(!exit)
@@ -54,9 +75,29 @@ class TESLA_Encyrption
       }
       else if(menuChoice == 3)
       {
-        
+        EncryptionGenerator cipherKey = new EncryptionGenerator();
+        cipherKey.createKey();
       }
     }
+  }
+
+  private static void frameSetup()
+  {
+    Dimension screen = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+    screenLength = (int)screen.getWidth();
+    screenWidth = (int)screen.getHeight();
+
+    mainFrame.setSize(screenLength / 3, screenWidth / 3);
+    mainFrame.setLocation(screenLength / 3, screenWidth / 3);
+    mainFrame.setMinimumSize(new Dimension(screenLength / 3, screenWidth /3));
+    mainFrame.setMaximumSize(screen);
+
+    mainCanvas.setSize(mainFrame.getWidth(), mainFrame.getHeight());
+    
+    mainFrame.add(mainCanvas);
+    mainFrame.pack();
+
+    mainFrame.setVisible(true);
   }
   
   public static int menu() // Menu
