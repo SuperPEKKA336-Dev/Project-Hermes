@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TESLA_Encryption",
+            "request": "launch",
+            "mainClass": "TESLA_Encryption",
+            "projectName": "TESLA Encryption Program_8a0b1658"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

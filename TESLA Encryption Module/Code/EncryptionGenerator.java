@@ -1,19 +1,20 @@
 /* @File: EncryptionGenerator.java */
 /* @Author: SuperPEKKA336 */
-/* @Version: 0.1.1 Alpha */
-/* @PatchNotes: Added characters 0 - 1278 Dec */
-/* @Updated: 03/17/2023 */
+/* @Version: 0.1.1 Beta */
+/* @PatchNotes: Added a filler */
+/* @Updated: 03/20/2023 */
 
 // Imports
+import java.io.File;
 import java.io.FileWriter;
 
 class EncryptionGenerator
 {
   // Constant Global Variables
-  public static final String PROGRAM_NAME = TESLA_Encyrption.PROGRAM_NAME;
-  public static final String VERSION_NUMBER = TESLA_Encyrption.VERSION_NUMBER;
+  public static final String PROGRAM_NAME = TESLA_Encryption.PROGRAM_NAME;
+  public static final String VERSION_NUMBER = TESLA_Encryption.VERSION_NUMBER;
 
-  private static String[][] encryptionKey = new String[1279][16];
+  private static String[][] encryptionKey = new String[1281][16];
 
   public EncryptionGenerator()
   {
@@ -25,7 +26,7 @@ class EncryptionGenerator
   {
     boolean duplication = false; // Boolean in case there's a duplication of keys
     
-    for(int character = 0; character < 1279; character++) // Creates a for loop to create a key for each character
+    for(int character = 0; character < 1281; character++) // Creates a for loop to create a key for each character
     {
       for(int keyNumber = 0; keyNumber < 16; keyNumber++) // Creates a for loop to create 16 keys for each character
       {
@@ -83,21 +84,48 @@ class EncryptionGenerator
       }
     }
 
-    try
-    {            
-      FileWriter cipherKeyFileWriter = new FileWriter("TESLA_CipherKey.txt");
+    String cipherKeyFileString = new String();
+
+    for(int i = 0; i < 16; i++)
+    {
+      int randNum = 0; // Random Number Variable
+      boolean validChar = false;
       
+      while(!validChar)
+      {
+        randNum = ((int)Math.floor(Math.random() * (128 - 0 + 1) + 0));
+
+        if((randNum >= 48 && randNum <= 57) || (randNum >= 65 && randNum <= 90) || (randNum >= 97 && randNum <= 122))
+        {
+          validChar = true;
+        }
+      }
+
+      cipherKeyFileString = cipherKeyFileString + (char)randNum;
+    }
+
+    cipherKeyFileString = cipherKeyFileString + ".ACK";
+
+    File cipherKeyFile = new File(cipherKeyFileString);
+    cipherKeyFile.setWritable(true);
+    
+    try
+    {
+      FileWriter cipherKeyFileWriter = new FileWriter(cipherKeyFile);
+
       cipherKeyFileWriter.write(PROGRAM_NAME + " - " + VERSION_NUMBER);
-      cipherKeyFileWriter.write("\n");
+      cipherKeyFileWriter.write("\n" + "\n");
+      cipherKeyFileWriter.write("File: " + cipherKeyFile.getName());
+      cipherKeyFileWriter.write("\n" + "\n");
       cipherKeyFileWriter.write("*Characters without a render will appear as [" + (char)65533 + "]");
-      cipherKeyFileWriter.write("\n");
+      cipherKeyFileWriter.write("\n" + "\n" + "\n");
       cipherKeyFileWriter.write("Character" + "\t" + "ASCII Code" + "\t" + "Encryption Key");
       
-      for(int character = 0; character < 1279; character++)
+      for(int character = 0; character < 1281; character++)
       {
         char writeChar = 65533;
 
-        if(Character.isDefined((char)character) && Character.isAlphabetic((char)character) && !Character.isWhitespace((char)character) && !Character.isIdeographic((char)character) && !Character.isIdentifierIgnorable((char)character) && character > 32 && character <= 512)
+        if(Character.isDefined((char)character) && Character.isAlphabetic((char)character) && !Character.isWhitespace((char)character) && !Character.isIdeographic((char)character) && !Character.isIdentifierIgnorable((char)character) && character > 32 && character <= 512 && character != 1280)
         {
           writeChar = (char)character;
         }
@@ -129,6 +157,15 @@ class EncryptionGenerator
             cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
           }
         }
+        else if(character == 1280)
+        {
+          cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + "Fill" + "       " + "\t");
+          
+          for(int keyNumber = 0; keyNumber < 16; keyNumber++)
+          {
+            cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
+          }
+        }
         else
         {
           cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + character + "       " + "\t");
@@ -139,12 +176,16 @@ class EncryptionGenerator
           }
         }
       }
-      
+
       cipherKeyFileWriter.close();
+      cipherKeyFile.setReadOnly();
     }    
     catch(Exception e)
     {
-      
+      if(cipherKeyFile.exists())
+        cipherKeyFile.delete();
+
+      System.out.println("[System] An error occured.");
     }
   }
 }
