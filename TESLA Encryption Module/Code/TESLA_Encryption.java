@@ -1,6 +1,7 @@
+/* @Project: Project Hermes */
 /* @File: TESLA_Encryption.java */
 /* @Author: SuperPEKKA336 */
-/* @Version: 0.1.1 Beta */
+/* @Version: 0.1.1 Pre-alpha */
 /* @PatchNotes: Working on some finishing touches */
 /* @Updated: 03/23/2023 */
 

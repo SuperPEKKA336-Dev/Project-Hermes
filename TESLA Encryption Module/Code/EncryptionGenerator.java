@@ -1,6 +1,7 @@
+/* @Project: Project Hermes */
 /* @File: EncryptionGenerator.java */
 /* @Author: SuperPEKKA336 */
-/* @Version: 0.1.1 Beta */
+/* @Version: 0.1.1 Pre-alpha */
 /* @PatchNotes: Added a filler */
 /* @Updated: 03/20/2023 */
 
