@@ -32,7 +32,7 @@ class TESLA_Encryption
 {
   // Constant Global Variables
   public static final String PROGRAM_NAME = new String("T.E.S.L.A. Encryption Program");
-  public static final String VERSION_NUMBER = new String("Version 0.1.1a");
+  public static final String VERSION_NUMBER = new String("Version 0.1.1 Pre-alpha");
   public static final File DEFAULT_DIRECTORY = new File(System.getProperty("user.home") + "/Documents");
   public static final FileNameExtensionFilter ACK_FILE_FILTER = new FileNameExtensionFilter("Advanced Cipher Key", "ACK");
   public static final FileNameExtensionFilter AEF_FILE_FILTER = new FileNameExtensionFilter("Advanced Encrypted File", "AEF");
