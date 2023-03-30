@@ -1,11 +1,13 @@
 /* @Project: Project Hermes */
-/* @File: TESLA_Encryption.java */
+/* @File: Window.java */
 /* @Author: SuperPEKKA336 */
 /* @Version: 0.1.1 Pre-alpha */
-/* @PatchNotes: Working on some finishing touches */
-/* @Updated: 03/23/2023 */
+/* @PatchNotes:  */
+/* @Updated: 03/30/2023 */
 
-// Imports
+/* ================================================== */
+
+/* Imports */
 import java.awt.*;
 import java.awt.Canvas;
 import java.awt.Component;
@@ -28,154 +30,211 @@ import javax.swing.JFrame;
 
 import java.util.*;
 
-class TESLA_Encryption
+class EncryptionModule
 {
-  // Constant Global Variables
-  public static final String PROGRAM_NAME = new String("T.E.S.L.A. Encryption Program");
-  public static final String VERSION_NUMBER = new String("Version 0.1.1 Pre-alpha");
-  public static final File DEFAULT_DIRECTORY = new File(System.getProperty("user.home") + "/Documents");
-  public static final FileNameExtensionFilter ACK_FILE_FILTER = new FileNameExtensionFilter("Advanced Cipher Key", "ACK");
-  public static final FileNameExtensionFilter AEF_FILE_FILTER = new FileNameExtensionFilter("Advanced Encrypted File", "AEF");
-  public static final FileNameExtensionFilter TXT_FILE_FILTER = new FileNameExtensionFilter("Plain Text", "txt");
-
-  static final String DEFAULT_FILE_NAME = new String("TESLA_CipherKey.ACK");
-  static final String DIVIDER = new String("==================================================");
-
-  // Global Variables
-  public static JFrame mainFrame = new JFrame(PROGRAM_NAME + " - " + VERSION_NUMBER);
-  public static Canvas mainCanvas = new Canvas();
-  public static int screenLength;
-  public static int screenWidth;
-
-  static String[][] encryptionKey = new String[1281][16];
-  static File encryptionKey_File = new File("");
-  static LineNumberReader encryptionKey_FileReader;
-  static JFileChooser fileChooser = new JFileChooser(DEFAULT_DIRECTORY);
-
-  static boolean exit;
-  static boolean keyLoaded = false;
-
-  private static Graphics Graphics;
-  
-  public static void main(String args[]) // Main method
+  public static void generateKey()
   {
-    //frameSetup();
-
-    int menuChoice = menu();
+    String[][] encryptionKey = new String[1281][16];
+    boolean duplication = false; // Boolean in case there's a duplication of keys
     
-    if(menuChoice == 1)
+    for(int character = 0; character < 1281; character++) // Creates a for loop to create a key for each character
     {
-      loadCipherKey();
+      for(int keyNumber = 0; keyNumber < 16; keyNumber++) // Creates a for loop to create 16 keys for each character
+      {
+        int characterNumber = 0;
+
+        encryptionKey[character][keyNumber] = "";
+        
+        while(characterNumber < 16) // Creates a while loop to create each of the 16 character long keys
+        {
+          int randNum = 0; // Random Number Variable
+          boolean validChar = false;
+          
+          while(!validChar)
+          {
+            randNum = ((int)Math.floor(Math.random() * (1279 - 0 + 1) + 0));
+
+            if(Character.isDefined((char)randNum) && Character.isAlphabetic((char)randNum) && !Character.isWhitespace((char)randNum) && !Character.isIdeographic((char)randNum) && !Character.isIdentifierIgnorable((char)randNum) && randNum > 32 && randNum <= 512)
+            {
+              validChar = true;
+            }
+          }
+                    
+          encryptionKey[character][keyNumber] = encryptionKey[character][keyNumber] + (char)randNum;
+          
+          characterNumber++;
+        }
+        
+        for(int i3 = 32; i3 < character + 1; i3++)
+        {
+          for(int i4 = 0; i4 < 16; i4++)
+          {
+            if(encryptionKey[character][keyNumber].equals(encryptionKey[i3][i4]) && character != i3 && keyNumber != i4 && !encryptionKey[character][keyNumber].equals(""))
+            {
+              duplication = true;
+              
+              keyNumber--;
+            }
+            
+            if(duplication)
+            {
+              break;
+            }
+          }
+          
+          if(duplication)
+          {
+            break;
+          }
+        }
+
+        if(!duplication)
+        {
+          encryptionKey[character][keyNumber] = (char)8203 + encryptionKey[character][keyNumber] + (char)8203;
+        }
+      }
+    }
+
+    String cipherKeyFileString = new String();
+
+    for(int i = 0; i < 16; i++)
+    {
+      int randNum = 0; // Random Number Variable
+      boolean validChar = false;
       
-      if(keyLoaded)
-        encryption();
+      while(!validChar)
+      {
+        randNum = ((int)Math.floor(Math.random() * (128 - 0 + 1) + 0));
+
+        if((randNum >= 48 && randNum <= 57) || (randNum >= 65 && randNum <= 90) || (randNum >= 97 && randNum <= 122))
+        {
+          validChar = true;
+        }
+      }
+
+      cipherKeyFileString = cipherKeyFileString + (char)randNum;
     }
-    else if(menuChoice == 2)
+
+    cipherKeyFileString = cipherKeyFileString + ".ACK";
+
+    File cipherKeyFile = new File(cipherKeyFileString);
+    cipherKeyFile.setWritable(true);
+    
+    try
     {
-      loadCipherKey();
+      FileWriter cipherKeyFileWriter = new FileWriter(cipherKeyFile);
+
+      cipherKeyFileWriter.write(Variables.PROGRAM_NAME + " - " + Variables.VERSION_NUMBER);
+      cipherKeyFileWriter.write("\n" + "\n");
+      cipherKeyFileWriter.write("File: " + cipherKeyFile.getName());
+      cipherKeyFileWriter.write("\n" + "\n");
+      cipherKeyFileWriter.write("*Characters without a render will appear as [" + (char)65533 + "]");
+      cipherKeyFileWriter.write("\n" + "\n" + "\n");
+      cipherKeyFileWriter.write("Character" + "\t" + "ASCII Code" + "\t" + "Encryption Key");
       
-      if(keyLoaded)
-        decryption();
-    }
-    else if(menuChoice == 3)
+      for(int character = 0; character < 1281; character++)
+      {
+        char writeChar = 65533;
+
+        if(Character.isDefined((char)character) && Character.isAlphabetic((char)character) && !Character.isWhitespace((char)character) && !Character.isIdeographic((char)character) && !Character.isIdentifierIgnorable((char)character) && character > 32 && character <= 512 && character != 1280)
+        {
+          writeChar = (char)character;
+        }
+
+        if(character < 10)
+        {
+          cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + "000" + character + "       " + "\t");
+          
+          for(int keyNumber = 0; keyNumber < 16; keyNumber++)
+          {
+            cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
+          }
+        }
+        else if(character < 100)
+        {
+          cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + "00" + character + "       " + "\t");
+          
+          for(int keyNumber = 0; keyNumber < 16; keyNumber++)
+          {
+            cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
+          }
+        }
+        else if(character < 1000)
+        {
+          cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + "0" + character + "       " + "\t");
+          
+          for(int keyNumber = 0; keyNumber < 16; keyNumber++)
+          {
+            cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
+          }
+        }
+        else if(character == 1280)
+        {
+          cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + "Fill" + "       " + "\t");
+          
+          for(int keyNumber = 0; keyNumber < 16; keyNumber++)
+          {
+            cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
+          }
+        }
+        else
+        {
+          cipherKeyFileWriter.write("\n" + "\n" + writeChar + "        " + "\t" + character + "       " + "\t");
+          
+          for(int keyNumber = 0; keyNumber < 16; keyNumber++)
+          {
+            cipherKeyFileWriter.write(encryptionKey[character][keyNumber] + "\t");
+          }
+        }
+      }
+
+      cipherKeyFileWriter.close();
+      cipherKeyFile.setReadOnly();
+    }    
+    catch(Exception e)
     {
-      EncryptionGenerator cipherKey = new EncryptionGenerator();
-      cipherKey.createKey();
+      if(cipherKeyFile.exists())
+        cipherKeyFile.delete();
 
-      exit = true;
+      System.out.println("[System] An error occured.");
     }
   }
 
-  private static void frameSetup()
+  protected static void loadCipherKey()
   {
-    Dimension screen = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
-    screenLength = (int)screen.getWidth();
-    screenWidth = (int)screen.getHeight();
+    File cipherKeyFile = new File("");
+    LineNumberReader cipherKeyFileReader;
 
-    mainFrame.setSize(screenLength / 3, screenWidth / 3);
-    mainFrame.setLocation(screenLength / 3, screenWidth / 3);
-    mainFrame.setMinimumSize(new Dimension(screenLength / 3, screenWidth /3));
-    mainFrame.setMaximumSize(screen);
-
-    mainCanvas.setSize(mainFrame.getWidth(), mainFrame.getHeight());
-    
-    mainFrame.add(mainCanvas);
-    mainFrame.pack();
-
-    mainFrame.setVisible(true);
-  }
-  
-  private static int menu() // Menu
-  {
-    System.out.println("T.E.S.L.A. Encryption Program - " + VERSION_NUMBER);
-    System.out.println();
-    System.out.println("Enter [`] at any time to exit.");
-    System.out.println();
-    System.out.println("1 - Encryption");
-    System.out.println("2 - Decryption");
-    System.out.println("3 - Generate Cipher Key");
-    System.out.println();
-    
-    Scanner menuChoiceScanner = new Scanner(System.in);
-    System.out.print("Your Choice: ");
-    String menuChoice_String = menuChoiceScanner.nextLine();
-    System.out.println();
-    
-    while(!menuChoice_String.equals("1") && !menuChoice_String.equals("2") && !menuChoice_String.equals("3") && !menuChoice_String.equals("`"))
-    {
-      System.out.println("[System] Invalid choice.");
-      System.out.println();
-      menuChoiceScanner = new Scanner(System.in);
-      System.out.print("Your Choice: ");
-      menuChoice_String = menuChoiceScanner.nextLine();
-      System.out.println();
-    }
-    
-    int menuChoice = 0;
-    
-    if(!menuChoice_String.equals("`"))
-      menuChoice = Integer.parseInt(menuChoice_String);    
-    else if(menuChoice_String.equals("`"))
-      exit = true;
-    
-    System.out.println(DIVIDER);
-    System.out.println();
-    
-    return menuChoice;
-  }
-  
-  private static void loadCipherKey() // Method to retreive the encryption key from a text file
-  {
     // Prompts user to slect file
     System.out.println("[System] Loading cipher key . . . .");
     System.out.println();
     
-    while(!exit && !keyLoaded)
+    while(!Variables.exit && !Variables.keyLoaded)
     {
-      fileChooser.setDialogTitle("Cipher Key");
-      fileChooser.addChoosableFileFilter(ACK_FILE_FILTER);
-      fileChooser.setFileHidingEnabled(true);
-      fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-      fileChooser.setAcceptAllFileFilterUsed(false);
+      Variables.fileChooser.setDialogTitle("Cipher Key");
+      Variables.fileChooser.addChoosableFileFilter(Variables.ACK_FILE_FILTER);
+      Variables.fileChooser.setFileHidingEnabled(true);
+      Variables.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      Variables.fileChooser.setAcceptAllFileFilterUsed(false);
     
-      if(fileChooser.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION)
+      if(Variables.fileChooser.showDialog(null, "Select") == JFileChooser.APPROVE_OPTION)
       {
-        encryptionKey_File = fileChooser.getSelectedFile();
+        cipherKeyFile = Variables.fileChooser.getSelectedFile();
         
         try
         {
-          encryptionKey_FileReader = new LineNumberReader(new FileReader(encryptionKey_File));
+          cipherKeyFileReader = new LineNumberReader(new FileReader(cipherKeyFile));
 
           for(int i = 0; i < 9; i++)
-            encryptionKey_FileReader.readLine();
+            cipherKeyFileReader.readLine();
           
           for(int i = 0; i < 1281; i++)
           {
-            String line = new String(encryptionKey_FileReader.readLine());
+            String line = new String(cipherKeyFileReader.readLine());
             
             String key = new String(line.substring(line.indexOf((char)8203) + 1, line.lastIndexOf((char)8203)));
             
-            encryptionKey[i][0] = key.substring(0, key.indexOf((char)8203));
+            Variables.cipherKey[i][0] = key.substring(0, key.indexOf((char)8203));
             
             for(int i2 = 1; i2 < 16; i2++)
             {            
@@ -185,22 +244,22 @@ class TESLA_Encryption
               
               if(i2 == 15)
               {
-                encryptionKey[i][i2] = key;
+                Variables.cipherKey[i][i2] = key;
               }
               else
               {
-                encryptionKey[i][i2] = key.substring(0, key.indexOf((char)8203));
+                Variables.cipherKey[i][i2] = key.substring(0, key.indexOf((char)8203));
               }
             }
             
-            encryptionKey_FileReader.readLine();
+            cipherKeyFileReader.readLine();
           }
           
-          keyLoaded = true;
+          Variables.keyLoaded = true;
           
-          if(keyLoaded)
+          if(Variables.keyLoaded)
           {
-            encryptionKey_FileReader.close();
+            cipherKeyFileReader.close();
           }
         }
         
@@ -221,19 +280,19 @@ class TESLA_Encryption
             
             if(choiceString.equals("n") || choiceString.equals("`"))
             {
-              exit = true;
+              Variables.exit = true;
             }
           }
           
-          keyLoaded = false;
+          Variables.keyLoaded = false;
         }
         
-        if(keyLoaded)
+        if(Variables.keyLoaded)
         {
           System.out.println("[System] Cipher key successfully loaded.");
-          System.out.println("[System] Cipher Key: " + encryptionKey_File.getName());
+          System.out.println("[System] Cipher Key: " + cipherKeyFile.getName());
           System.out.println();
-          System.out.println(DIVIDER);
+          System.out.println(Variables.DIVIDER);
           System.out.println();
         }
       }
@@ -248,33 +307,33 @@ class TESLA_Encryption
         
         if(choiceString.equals("n") || choiceString.equals("`"))
         {
-          exit = true;
+          Variables.exit = true;
         }
       }
     }
   }
-  
-  private static void encryption()
+
+  public static void encryption()
   {
     File textFile = new File("");
     boolean retry = true;
 
-    while(retry && !exit)
+    while(retry && !Variables.exit)
     {
       System.out.println("[System] Loading file . . . .");
       System.out.println();
 
       // Prompts user to slect file      
       // fileChooser.setCurrentDirectory(DEFAULT_DIRECTORY);
-      fileChooser.setDialogTitle("Text File");
-      fileChooser.resetChoosableFileFilters();
-      fileChooser.addChoosableFileFilter(TXT_FILE_FILTER);
-      fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-      fileChooser.setAcceptAllFileFilterUsed(false);
+      Variables.fileChooser.setDialogTitle("Text File");
+      Variables.fileChooser.resetChoosableFileFilters();
+      Variables.fileChooser.addChoosableFileFilter(Variables.TXT_FILE_FILTER);
+      Variables.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      Variables.fileChooser.setAcceptAllFileFilterUsed(false);
 
-      if(fileChooser.showDialog(null, "Upload") == JFileChooser.APPROVE_OPTION)
+      if(Variables.fileChooser.showDialog(null, "Upload") == JFileChooser.APPROVE_OPTION)
       {
-        textFile = fileChooser.getSelectedFile();
+        textFile = Variables.fileChooser.getSelectedFile();
         
         System.out.println("[System] File successfully loaded.");
         System.out.println("[System] File: " + textFile.getName());
@@ -286,7 +345,7 @@ class TESLA_Encryption
 
         if(!encryptChoiceString.equals("y") && !encryptChoiceString.equals("n") && !encryptChoiceString.equals("`"))
         {
-          while(!exit)
+          while(!Variables.exit)
           {
             System.out.println("[System] Error: Invalid Choice.");
             encryptChoiceScanner = new Scanner(System.in);
@@ -295,7 +354,7 @@ class TESLA_Encryption
             
             if(encryptChoiceString.equals("n") || encryptChoiceString.equals("`"))
             {
-              exit = true;
+              Variables.exit = true;
               
               break;
             }
@@ -307,7 +366,7 @@ class TESLA_Encryption
         }
         else if(encryptChoiceString.equals("n") || encryptChoiceString.equals("`"))
         {
-          exit = true;
+          Variables.exit = true;
         }
         
         if(encryptChoiceString.equals("y"))
@@ -349,10 +408,10 @@ class TESLA_Encryption
               {
                 int randNum = (int)Math.floor(Math.random() * (15 - 0 + 1) + 0);
                 
-                encryptedFileWriter.write(encryptionKey[character][randNum]);
+                encryptedFileWriter.write(Variables.cipherKey[character][randNum]);
 
                 if((int)Math.floor(Math.random() * (10 - 0 + 1) + 0) == 1)
-                  encryptedFileWriter.write(encryptionKey[1280][(int)Math.floor(Math.random() * (16 - 0 + 1) + 0)]);
+                  encryptedFileWriter.write(Variables.cipherKey[1280][(int)Math.floor(Math.random() * (16 - 0 + 1) + 0)]);
                 
                 character = fileReader.read();
               }
@@ -362,7 +421,7 @@ class TESLA_Encryption
               System.out.println("[System] File successfully encrypted.");
               System.out.println("[System] File: " + encryptedFile.getName());
               System.out.println();
-              System.out.println(DIVIDER);
+              System.out.println(Variables.DIVIDER);
 
               encryptedFileWriter.close();
               fileReader.close();
@@ -376,7 +435,7 @@ class TESLA_Encryption
               
               if(!choiceString.equals("n") || !choiceString.equals("`") || !choiceString.equals("`"))
               {
-                while(!exit)
+                while(!Variables.exit)
                 {
                   System.out.println("[System] Error: Invalid Choice.");
                   choiceScanner = new Scanner(System.in);
@@ -386,7 +445,7 @@ class TESLA_Encryption
                   
                   if(choiceString.equals("n") || choiceString.equals("`"))
                   {
-                    exit = true;
+                    Variables.exit = true;
                     
                     break;
                   }
@@ -409,7 +468,7 @@ class TESLA_Encryption
             
             if(!choiceString.equals("n") || !choiceString.equals("`") || !choiceString.equals("`"))
             {
-              while(!exit)
+              while(!Variables.exit)
               {
                 System.out.println("[System] Error: Invalid Choice.");
                 choiceScanner = new Scanner(System.in);
@@ -419,7 +478,7 @@ class TESLA_Encryption
                 
                 if(choiceString.equals("n") || choiceString.equals("`"))
                 {
-                  exit = true;
+                  Variables.exit = true;
                   
                   break;
                 }
@@ -436,28 +495,28 @@ class TESLA_Encryption
       }
     }
   }
-  
-  private static void decryption()
+
+  public static void decryption()
   {
     File encryptedFile = new File("");
     boolean retry = true;
 
-    while(retry && !exit)
+    while(retry && !Variables.exit)
     {
       System.out.println("[System] Loading file . . . .");
       System.out.println();
 
       // Prompts user to slect file      
       // fileChooser.setCurrentDirectory(DEFAULT_DIRECTORY);
-      fileChooser.setDialogTitle("Advanced Encrypted File");
-      fileChooser.resetChoosableFileFilters();
-      fileChooser.addChoosableFileFilter(AEF_FILE_FILTER);
-      fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-      fileChooser.setAcceptAllFileFilterUsed(false);
+      Variables.fileChooser.setDialogTitle("Advanced Encrypted File");
+      Variables.fileChooser.resetChoosableFileFilters();
+      Variables.fileChooser.addChoosableFileFilter(Variables.AEF_FILE_FILTER);
+      Variables.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      Variables.fileChooser.setAcceptAllFileFilterUsed(false);
 
-      if(fileChooser.showDialog(null, "Upload") == JFileChooser.APPROVE_OPTION)
+      if(Variables.fileChooser.showDialog(null, "Upload") == JFileChooser.APPROVE_OPTION)
       {
-        encryptedFile = fileChooser.getSelectedFile();
+        encryptedFile = Variables.fileChooser.getSelectedFile();
         
         System.out.println("[System] File successfully loaded.");
         System.out.println("[System] File: " + encryptedFile.getName());
@@ -469,7 +528,7 @@ class TESLA_Encryption
 
         if(!encryptChoiceString.equals("y") && !encryptChoiceString.equals("n") && !encryptChoiceString.equals("`"))
         {
-          while(!exit)
+          while(!Variables.exit)
           {
             System.out.println("[System] Error: Invalid Choice.");
             encryptChoiceScanner = new Scanner(System.in);
@@ -478,7 +537,7 @@ class TESLA_Encryption
             
             if(encryptChoiceString.equals("n") || encryptChoiceString.equals("`"))
             {
-              exit = true;
+              Variables.exit = true;
               
               break;
             }
@@ -490,7 +549,7 @@ class TESLA_Encryption
         }
         else if(encryptChoiceString.equals("n") || encryptChoiceString.equals("`"))
         {
-          exit = true;
+          Variables.exit = true;
         }
         
         if(encryptChoiceString.equals("y"))
@@ -552,7 +611,7 @@ class TESLA_Encryption
 
                   for(int i2 = 0; i2 < 16; i2++)
                   {
-                    if(encryptedCharacter.equals(encryptionKey[i][i2]) && !encryptedCharacter.equals(encryptionKey[1280][i2]))
+                    if(encryptedCharacter.equals(Variables.cipherKey[i][i2]) && !encryptedCharacter.equals(Variables.cipherKey[1280][i2]))
                     {
                       decryptedFileWritrer.write((char)i);
 
@@ -572,7 +631,7 @@ class TESLA_Encryption
               System.out.println("[System] File successfully encrypted.");
               System.out.println("[System] File: " + decryptedFile.getName());
               System.out.println();
-              System.out.println(DIVIDER);
+              System.out.println(Variables.DIVIDER);
 
               decryptedFileWritrer.close();
               encryptedFileReader.close();
@@ -586,7 +645,7 @@ class TESLA_Encryption
               
               if(!choiceString.equals("n") || !choiceString.equals("`") || !choiceString.equals("`"))
               {
-                while(!exit)
+                while(!Variables.exit)
                 {
                   System.out.println("[System] Error: Invalid Choice.");
                   choiceScanner = new Scanner(System.in);
@@ -596,7 +655,7 @@ class TESLA_Encryption
                   
                   if(choiceString.equals("n") || choiceString.equals("`"))
                   {
-                    exit = true;
+                    Variables.exit = true;
                     
                     break;
                   }
@@ -619,7 +678,7 @@ class TESLA_Encryption
             
             if(!choiceString.equals("n") || !choiceString.equals("`") || !choiceString.equals("`"))
             {
-              while(!exit)
+              while(!Variables.exit)
               {
                 System.out.println("[System] Error: Invalid Choice.");
                 choiceScanner = new Scanner(System.in);
@@ -629,7 +688,7 @@ class TESLA_Encryption
                 
                 if(choiceString.equals("n") || choiceString.equals("`"))
                 {
-                  exit = true;
+                  Variables.exit = true;
                   
                   break;
                 }
@@ -647,3 +706,5 @@ class TESLA_Encryption
     }
   }
 }
+
+/* ================================================== */
