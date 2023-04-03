@@ -3,7 +3,7 @@
 /* @Author: SuperPEKKA336 */
 /* @Version: 0.1.1 Pre-alpha */
 /* @PatchNotes:  */
-/* @Updated: 03/30/2023 */
+/* @Updated: 04/03/2023 */
 
 /* ================================================== */
 
@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -32,6 +33,9 @@ class Variables
   protected static final int screenWidth = (int)new Dimension(Toolkit.getDefaultToolkit().getScreenSize()).getHeight();
   protected static final Dimension SCREEN = new Dimension(screenLength, screenWidth);
 
+  // Images
+  protected static final ImageIcon TESLA_LOGO = new ImageIcon("Images/TESLA_Logo.png");
+
   // Other Variables
   protected static final FileNameExtensionFilter ACK_FILE_FILTER = new FileNameExtensionFilter("Advanced Cipher Key", "ACK");
   protected static final FileNameExtensionFilter AEF_FILE_FILTER = new FileNameExtensionFilter("Advanced Encrypted File", "AEF");
@@ -44,7 +48,7 @@ class Variables
 
   // Window Objects
   protected static JFrame mainFrame = new JFrame(Variables.PROGRAM_NAME + " - " + Variables.VERSION_NUMBER);
-  protected static Canvas mainCanvas = new Canvas();
+  protected static Canvas mainCanvas = new Drawing();
 
   // Control Booleans
   protected static boolean exit = false;
